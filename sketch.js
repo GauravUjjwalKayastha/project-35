@@ -1,6 +1,6 @@
 var balloon,balloonImage1,balloonImage2;
 // create database and position variable here
-var database,position,showError;
+var database,position;//showError;
 function preload(){
    bg =loadImage("cityImage.png");
    balloonImage1=loadAnimation("hotairballoon1.png");
@@ -20,6 +20,7 @@ function setup() {
 
   var balloonPosition=database.ref('balloon/position');
   balloonPosition.on("value",readPosition,showError);
+  rePosition();
 
   textSize(20); 
 }
@@ -28,27 +29,29 @@ function setup() {
 function draw() {
   background(bg);
 
-  if(keyDown(LEFT_ARROW)){
+  if(keyDown(LEFT_ARROW)&&balloon.x>100){
     balloon.addAnimation("hotAirBalloon",balloonImage2);
     //write code to move air balloon in left direction
-    writePosition(-1,0);
+    writePosition(-10,0);
   }
-  else if(keyDown(RIGHT_ARROW)){
+  else if(keyDown(RIGHT_ARROW)&&balloon.x<width-100){
     balloon.addAnimation("hotAirBalloon",balloonImage2);
     //write code to move air balloon in right direction
-    writePosition(+1,0);
+    writePosition(+10,0);
   }
-  else if(keyDown(UP_ARROW)){
+  else if(keyDown(UP_ARROW)&&balloon.y>100){
     balloon.addAnimation("hotAirBalloon",balloonImage2);
     //write code to move air balloon in up direction
-    writePosition(0,-1);
+    writePosition(0,-10);
+   // balloon.scale=balloon.scale-0.01;
   }
-  else if(keyDown(DOWN_ARROW)){
+  else if(keyDown(DOWN_ARROW)&&balloon.y<height-150){
     balloon.addAnimation("hotAirBalloon",balloonImage2);
     //write code to move air balloon in down direction
-    writePosition(0,+1);
+    writePosition(0,+10);
+   // balloon.scale=balloon.scale+0.01;
   }
-
+  scaleB();
   drawSprites();
   fill(0);
   stroke("white");
@@ -69,4 +72,22 @@ function readPosition(data){
   position =data.val();
   balloon.x=position.x;
   balloon.y=position.y;
+}
+function showError(){
+ console.log("Error in writing to the database")
+}
+
+function rePosition(){
+  database.ref('balloon/position').set(
+    {
+      'x' : 250,
+      'y' : 450,
+   }
+  )
+ 
+}
+function scaleB(){
+  
+    balloon.scale=balloon.y/900;
+  
 }
